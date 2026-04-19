@@ -42,6 +42,9 @@
           "tsconfig": "tsconfig.json"
         }
       ]
+    },
+    "moduleNameMapper": {
+      "^(\\.\\.?/.*)\\.js$": "$1"
     }
   }
 }

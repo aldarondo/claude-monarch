@@ -3,7 +3,7 @@ import {
   CallToolRequestSchema,
   ListToolsRequestSchema,
 } from "@modelcontextprotocol/sdk/types.js";
-import { getTransactions, getAccounts, getNetWorth } from "./api.js";
+import { getTransactions, getAccounts, getNetWorth, getCashflow } from "./api.js";
 
 export function createServer(): Server {
   const server = new Server(
@@ -58,6 +58,22 @@ export function createServer(): Server {
         inputSchema: {
           type: "object",
           properties: {},
+          required: [],
+        },
+      },
+      {
+        name: "get_cashflow",
+        description:
+          "Get monthly income vs expenses for the past N months, derived from transactions. " +
+          "Returns per-month breakdown with net savings.",
+        inputSchema: {
+          type: "object",
+          properties: {
+            months: {
+              type: "number",
+              description: "Number of months to look back (default 3)",
+            },
+          },
           required: [],
         },
       },
@@ -148,6 +164,36 @@ export function createServer(): Server {
             ``,
             `Top accounts by absolute value:`,
             ...topLines,
+          ].join("\n");
+
+          return { content: [{ type: "text", text }] };
+        }
+
+        case "get_cashflow": {
+          const months = args.months !== undefined ? Number(args.months) : 3;
+          const cashflow = await getCashflow(months);
+
+          if (cashflow.length === 0) {
+            return {
+              content: [{ type: "text", text: "No transaction data found for the requested period." }],
+            };
+          }
+
+          const lines = cashflow.map(
+            (m) =>
+              `${m.month}  Income: $${m.income.toFixed(2)}  Expenses: $${m.expenses.toFixed(2)}  Net: ${m.net >= 0 ? "+" : ""}$${m.net.toFixed(2)}`
+          );
+
+          const totalIncome   = cashflow.reduce((s, m) => s + m.income, 0);
+          const totalExpenses = cashflow.reduce((s, m) => s + m.expenses, 0);
+          const totalNet      = totalIncome - totalExpenses;
+
+          const text = [
+            `Cashflow — last ${months} month(s):`,
+            ``,
+            ...lines,
+            ``,
+            `Total  Income: $${totalIncome.toFixed(2)}  Expenses: $${totalExpenses.toFixed(2)}  Net: ${totalNet >= 0 ? "+" : ""}$${totalNet.toFixed(2)}`,
           ].join("\n");
 
           return { content: [{ type: "text", text }] };

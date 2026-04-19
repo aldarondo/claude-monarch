@@ -25,6 +25,13 @@ export interface Account {
   balance: number;
 }
 
+export interface MonthlyCashflow {
+  month: string;
+  income: number;
+  expenses: number;
+  net: number;
+}
+
 export interface BalanceSnapshot {
   assets: number;
   liabilities: number;
@@ -120,6 +127,49 @@ export async function getAccounts(): Promise<Account[]> {
     type: a.type?.name ?? "unknown",
     balance: a.signedBalance ?? a.displayBalance ?? 0,
   }));
+}
+
+/**
+ * Derive monthly cashflow from transactions for the past N months.
+ * Income = positive amounts, Expenses = absolute value of negative amounts.
+ */
+export async function getCashflow(months: number = 3): Promise<MonthlyCashflow[]> {
+  const endDate = new Date();
+  const startDate = new Date(endDate);
+  startDate.setMonth(startDate.getMonth() - months);
+
+  const pad = (n: number) => String(n).padStart(2, "0");
+  const fmt = (d: Date) => `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}`;
+
+  const txns = await getTransactions({
+    start_date: fmt(startDate),
+    end_date: fmt(endDate),
+    limit: 500,
+  });
+
+  const byMonth: Map<string, { income: number; expenses: number }> = new Map();
+
+  for (const t of txns) {
+    const month = t.date.slice(0, 7); // YYYY-MM
+    if (!byMonth.has(month)) byMonth.set(month, { income: 0, expenses: 0 });
+    const bucket = byMonth.get(month)!;
+    // Monarch Money convention: positive = expense, negative = income (credit)
+    // but this varies by account type. Treat positive as expense, negative as income.
+    if (t.amount > 0) {
+      bucket.expenses += t.amount;
+    } else {
+      bucket.income += Math.abs(t.amount);
+    }
+  }
+
+  return Array.from(byMonth.entries())
+    .sort(([a], [b]) => a.localeCompare(b))
+    .map(([month, { income, expenses }]) => ({
+      month,
+      income: Math.round(income * 100) / 100,
+      expenses: Math.round(expenses * 100) / 100,
+      net: Math.round((income - expenses) * 100) / 100,
+    }));
 }
 
 export async function getNetWorth(): Promise<BalanceSnapshot> {

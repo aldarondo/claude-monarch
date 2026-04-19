@@ -17,7 +17,7 @@ jest.mock("monarch-money-ts", () => {
 });
 
 const monarchTs = require("monarch-money-ts");
-const { resetClients, setClientsForTesting, getTransactions, getAccounts, getNetWorth } =
+const { resetClients, setClientsForTesting, getTransactions, getAccounts, getNetWorth, getCashflow } =
   require("../../src/api");
 
 beforeEach(() => {
@@ -179,5 +179,53 @@ describe("getNetWorth", () => {
     expect(result.liabilities).toBe(0);
     expect(result.assets).toBe(12000);
     expect(result.net_worth).toBe(12000);
+  });
+});
+
+// ─── get_cashflow ───────────────────────────────────────────────────────────
+
+describe("getCashflow", () => {
+  test("groups transactions by month and splits income vs expenses", async () => {
+    monarchTs.getTransactions.mockResolvedValue({
+      transactions: [
+        // January expenses (positive = expense)
+        { date: "2026-01-05", merchant: { name: "Grocery" }, amount: 120, category: { name: "Food" }, account: { displayName: "Checking" } },
+        { date: "2026-01-20", merchant: { name: "Rent" }, amount: 2000, category: { name: "Housing" }, account: { displayName: "Checking" } },
+        // January income (negative = credit/income)
+        { date: "2026-01-15", merchant: { name: "Employer" }, amount: -5000, category: { name: "Income" }, account: { displayName: "Checking" } },
+        // February expenses
+        { date: "2026-02-03", merchant: { name: "Grocery" }, amount: 150, category: { name: "Food" }, account: { displayName: "Checking" } },
+      ],
+      totalCount: 4,
+      totalSelectableCount: 4,
+      transactionRuleIds: [],
+    });
+
+    const result = await getCashflow(3);
+
+    expect(result).toHaveLength(2);
+    const jan = result.find((m) => m.month === "2026-01");
+    const feb = result.find((m) => m.month === "2026-02");
+
+    expect(jan).toBeDefined();
+    expect(jan.income).toBe(5000);
+    expect(jan.expenses).toBe(2120);
+    expect(jan.net).toBe(2880);
+
+    expect(feb).toBeDefined();
+    expect(feb.expenses).toBe(150);
+    expect(feb.net).toBe(-150);
+  });
+
+  test("returns empty array when no transactions", async () => {
+    monarchTs.getTransactions.mockResolvedValue({
+      transactions: [],
+      totalCount: 0,
+      totalSelectableCount: 0,
+      transactionRuleIds: [],
+    });
+
+    const result = await getCashflow(1);
+    expect(result).toEqual([]);
   });
 });
