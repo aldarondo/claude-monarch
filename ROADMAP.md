@@ -2,19 +2,21 @@
 > Tag key: `[Code]` = Claude Code · `[Cowork]` = Claude Cowork · `[Human]` = Charles must act
 
 ## 🔄 In Progress
-- [ ] `[Code]` Define project game plan
+<!-- nothing in progress -->
 
 ## 🔲 Backlog
-- [ ] `[Human]` Obtain Monarch Money API token or session cookie for auth
-- [ ] `[Code]` Research Monarch Money API (official or reverse-engineered) — document endpoints
-- [ ] `[Code]` Scaffold MCP server with `get_transactions` tool (account, date range, institution filters)
-- [ ] `[Code]` Add `get_accounts` and `get_balances` tools
-- [ ] `[Code]` Containerize with Dockerfile for Synology NAS deployment
-- [ ] `[Code]` Write unit tests for core logic
-- [ ] `[Code]` Write integration tests for end-to-end flows
+- [ ] `[Code]` Add `get_cashflow` tool (monthly income vs expenses summary)
+- [ ] `[Code]` Integrate `get_budgets` tool for budget vs actual comparison
+- [ ] `[Code]` Write additional integration tests for server.ts tool dispatch layer
+- [ ] `[Code]` Publish Docker image to Synology container registry
 
 ## ✅ Completed
-<!-- dated entries go here -->
+- [x] `[Code]` Define project game plan — 2026-04-19
+- [x] `[Code]` Research Monarch Money API (monarch-money-ts npm package) — 2026-04-19
+- [x] `[Code]` Scaffold MCP server skeleton with `get_transactions`, `get_accounts`, `get_balances` tools — 2026-04-19
+- [x] `[Code]` Containerize with Dockerfile + docker-compose.yml for Synology NAS deployment — 2026-04-19
+- [x] `[Code]` Write unit tests for core logic (7 unit tests) — 2026-04-19
+- [x] `[Code]` Write integration tests for end-to-end flows (3 integration tests) — 2026-04-19
 
 ## 🚫 Blocked
-<!-- log blockers here -->
+- `[Human]` Obtain `MONARCH_TOKEN` — needed before any live API calls work. Once in hand, set it in `.env` (see `.env.example`).
