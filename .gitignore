@@ -1,0 +1,35 @@
+# ── Node ──────────────────────────────────────────
+node_modules/
+dist/
+.next/
+out/
+*.log
+npm-debug.log*
+yarn-error.log*
+.pnpm-debug.log*
+
+# ── TypeScript ────────────────────────────────────
+*.js.map
+*.d.ts
+tsconfig.tsbuildinfo
+
+# ── Secrets & credentials (always ignore) ─────────
+.env
+.env.local
+.env.*.local
+*.pem
+*.key
+token.json
+credentials.json
+service-account.json
+secrets.json
+secrets/
+
+# ── OS & editor ───────────────────────────────────
+.DS_Store
+Thumbs.db
+*.swp
+*.swo
+*.swn
+.vscode/settings.json
+.idea/workspace.xml
