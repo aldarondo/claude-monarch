@@ -21,4 +21,5 @@
 ## 🚫 Blocked
 - `[Human]` Obtain `MONARCH_TOKEN` — needed before any live API calls work. Once in hand, set it in `.env` (see `.env.example`).
 - `[Human]` Add `NAS_SSH_PASSWORD` to GitHub repo secrets (Settings → Secrets → Actions) — required for deploy workflow to SSH into the NAS.
-- `[Human]` First-time NAS setup: create `/volume1/docker/claude-monarch/`, copy `docker-compose.yml` and `.env` (with `MONARCH_TOKEN`) there. After that, all future deploys are automatic on push to main.
+- ~~`[Human]` First-time NAS setup~~ Done 2026-04-19 — `/volume1/docker/claude-monarch/` deployed, container running
+- `[Human]` Set `MONARCH_TOKEN` in `/volume1/docker/claude-monarch/.env` then `docker compose restart claude-monarch`
