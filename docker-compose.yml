@@ -2,12 +2,10 @@ version: "3.8"
 
 services:
   claude-monarch:
-    build: .
-    image: claude-monarch:latest
+    image: ghcr.io/aldarondo/claude-monarch:latest
     container_name: claude-monarch
     network_mode: host
     restart: unless-stopped
-    command: node dist/serve.js
     environment:
       - MONARCH_TOKEN=${MONARCH_TOKEN}
       - PORT=8775

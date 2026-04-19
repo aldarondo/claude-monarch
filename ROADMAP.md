@@ -5,9 +5,9 @@
 <!-- nothing in progress -->
 
 ## 🔲 Backlog
-- [ ] `[Code]` Add `get_cashflow` tool (monthly income vs expenses summary)
+- [x] `[Code]` 2026-04-19 — Add `get_cashflow` tool — monthly income vs expenses derived from transactions; N months lookback; 2 unit tests added
 - [ ] `[Code]` Integrate `get_budgets` tool for budget vs actual comparison
-- [ ] `[Code]` Write additional integration tests for server.ts tool dispatch layer
+- [x] `[Code]` 2026-04-19 — Write server dispatch integration tests — 6 tests covering all 4 tools + error path via InMemoryTransport; fixed moduleNameMapper for `.js` → `.ts` resolution in jest config
 - [ ] `[Code]` Publish Docker image to Synology container registry
 
 ## ✅ Completed
@@ -20,3 +20,5 @@
 
 ## 🚫 Blocked
 - `[Human]` Obtain `MONARCH_TOKEN` — needed before any live API calls work. Once in hand, set it in `.env` (see `.env.example`).
+- `[Human]` Add `NAS_SSH_PASSWORD` to GitHub repo secrets (Settings → Secrets → Actions) — required for deploy workflow to SSH into the NAS.
+- `[Human]` First-time NAS setup: create `/volume1/docker/claude-monarch/`, copy `docker-compose.yml` and `.env` (with `MONARCH_TOKEN`) there. After that, all future deploys are automatic on push to main.
