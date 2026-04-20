@@ -19,7 +19,7 @@
 - [x] `[Code]` Write integration tests for end-to-end flows (3 integration tests) — 2026-04-19
 
 ## 🚫 Blocked
-- ❌ [docker-monitor:deploy-failed] GitHub Actions deploy failed (run #24635599828) — https://github.com/aldarondo/claude-monarch/actions/runs/24635599828 — 2026-04-20 16:23 UTC
+- ❌ [docker-monitor:deploy-failed] GitHub Actions deploy failed (run #24635599828) — https://github.com/aldarondo/claude-monarch/actions/runs/24635599828 — 2026-04-20 16:57 UTC
 - `[Human]` Obtain `MONARCH_TOKEN` — needed before any live API calls work. Once in hand, set it in `.env` (see `.env.example`).
 - `[Human]` Add `NAS_SSH_PASSWORD` to GitHub repo secrets (Settings → Secrets → Actions) — required for deploy workflow to SSH into the NAS.
 - ~~`[Human]` First-time NAS setup~~ Done 2026-04-19 — `/volume1/docker/claude-monarch/` deployed, container running
