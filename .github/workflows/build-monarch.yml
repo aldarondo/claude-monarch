@@ -11,7 +11,6 @@ on:
       - docker-compose.yml
       - .github/workflows/build-monarch.yml
   schedule:
-    # Rebuild weekly (Sunday 04:00 UTC) to pick up Node base image security patches
     - cron: "0 4 * * 0"
   workflow_dispatch:
 
@@ -42,7 +41,13 @@ jobs:
             ghcr.io/${{ github.repository_owner }}/claude-monarch:latest
             ghcr.io/${{ github.repository_owner }}/claude-monarch:${{ github.sha }}
 
+      - name: Install cloudflared
+        run: |
+          curl -fsSL https://github.com/cloudflare/cloudflared/releases/latest/download/cloudflared-linux-amd64.deb -o /tmp/cloudflared.deb
+          sudo dpkg -i /tmp/cloudflared.deb && sudo apt-get install -y sshpass
+
       - name: Deploy to NAS
+<<<<<<< HEAD
         if: ${{ secrets.NAS_SSH_PASSWORD != '' }}
         uses: appleboy/ssh-action@v1
         with:
@@ -55,5 +60,16 @@ jobs:
           script: |
             echo "$NAS_PASS" | sudo -S /usr/local/bin/docker compose -f /volume1/docker/claude-monarch/docker-compose.yml pull
             echo "$NAS_PASS" | sudo -S /usr/local/bin/docker compose -f /volume1/docker/claude-monarch/docker-compose.yml up -d
+=======
+>>>>>>> 0b8629a091204d34996c27f1ca2ee46393ffcbf4
         env:
           NAS_PASS: ${{ secrets.NAS_SSH_PASSWORD }}
+          SSHPASS: ${{ secrets.NAS_SSH_PASSWORD }}
+          CF_CLIENT_ID: ${{ secrets.CF_ACCESS_CLIENT_ID }}
+          CF_CLIENT_SECRET: ${{ secrets.CF_ACCESS_CLIENT_SECRET }}
+        run: |
+          sshpass -e ssh -o StrictHostKeyChecking=no \
+            -o "ProxyCommand=cloudflared access ssh --hostname nas-ssh.aldarondo.family --id $CF_CLIENT_ID --secret $CF_CLIENT_SECRET" \
+            charles@nas-ssh.aldarondo.family \
+            "echo \"$NAS_PASS\" | sudo -S /usr/local/bin/docker compose -f /volume1/docker/claude-monarch/docker-compose.yml pull && \
+             echo \"$NAS_PASS\" | sudo -S /usr/local/bin/docker compose -f /volume1/docker/claude-monarch/docker-compose.yml up -d"
