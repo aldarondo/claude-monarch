@@ -3,7 +3,7 @@ import {
   CallToolRequestSchema,
   ListToolsRequestSchema,
 } from "@modelcontextprotocol/sdk/types.js";
-import { getTransactions, getAccounts, getNetWorth, getCashflow } from "./api.js";
+import { getTransactions, getAccounts, getNetWorth, getCashflow, getBudgets } from "./api.js";
 
 export function createServer(): Server {
   const server = new Server(
@@ -72,6 +72,22 @@ export function createServer(): Server {
             months: {
               type: "number",
               description: "Number of months to look back (default 3)",
+            },
+          },
+          required: [],
+        },
+      },
+      {
+        name: "get_budgets",
+        description:
+          "Compare budgeted amounts vs actual spending for a given month. " +
+          "Returns income and expense category groups with planned, actual, and remaining amounts.",
+        inputSchema: {
+          type: "object",
+          properties: {
+            month: {
+              type: "string",
+              description: "Month in YYYY-MM format (default: current month)",
             },
           },
           required: [],
@@ -197,6 +213,33 @@ export function createServer(): Server {
           ].join("\n");
 
           return { content: [{ type: "text", text }] };
+        }
+
+        case "get_budgets": {
+          const month = args.month !== undefined ? String(args.month) : undefined;
+          const comparison = await getBudgets(month);
+
+          if (comparison.groups.length === 0) {
+            return {
+              content: [{ type: "text", text: "No budget data found for the requested month." }],
+            };
+          }
+
+          const lines: string[] = [`Budget vs Actual — ${comparison.month}`, ``];
+
+          for (const grp of comparison.groups) {
+            if (grp.type === "transfer") continue;
+            lines.push(
+              `${grp.name} (${grp.type}): planned $${grp.planned.toFixed(2)} | actual $${grp.actual.toFixed(2)} | remaining $${grp.remaining.toFixed(2)}`
+            );
+            for (const cat of grp.categories) {
+              lines.push(
+                `  • ${cat.name}: $${cat.actual.toFixed(2)} / $${cat.planned.toFixed(2)}`
+              );
+            }
+          }
+
+          return { content: [{ type: "text", text: lines.join("\n") }] };
         }
 
         default:

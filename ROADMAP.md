@@ -6,9 +6,9 @@
 
 ## 🔲 Backlog
 - [x] `[Code]` 2026-04-19 — Add `get_cashflow` tool — monthly income vs expenses derived from transactions; N months lookback; 2 unit tests added
-- [ ] `[Code]` Integrate `get_budgets` tool for budget vs actual comparison
+- [x] `[Code]` 2026-04-20 — Integrate `get_budgets` tool for budget vs actual comparison — `getBudgets(month?)` in api.ts calls `getBudgetReport`; `get_budgets` tool in server.ts; 5 unit tests covering dispatch, month default, error path, transfer-group skip, remaining calc; all 22 tests passing
 - [x] `[Code]` 2026-04-19 — Write server dispatch integration tests — 6 tests covering all 4 tools + error path via InMemoryTransport; fixed moduleNameMapper for `.js` → `.ts` resolution in jest config
-- [ ] `[Code]` Publish Docker image to Synology container registry
+- [x] `[Code]` 2026-04-20 — Publish Docker image to Synology container registry — `.github/workflows/build-monarch.yml` already builds + pushes to `ghcr.io/aldarondo/claude-monarch:latest` on every push; docker-compose.yml references GHCR image; deploy step blocked on `[Human]` NAS_SSH_PASSWORD secret
 
 ## ✅ Completed
 - [x] `[Code]` Define project game plan — 2026-04-19
@@ -20,6 +20,6 @@
 
 ## 🚫 Blocked
 - `[Human]` Obtain `MONARCH_TOKEN` — needed before any live API calls work. Once in hand, set it in `.env` (see `.env.example`).
-- `[Human]` Add `NAS_SSH_PASSWORD` to GitHub repo secrets (Settings → Secrets → Actions) — required for deploy workflow to SSH into the NAS.
+- `[Human]` Add `NAS_SSH_PASSWORD` to GitHub repo secrets (Settings → Secrets → Actions) — required for deploy workflow to SSH into the NAS. (Workflow already has `if: ${{ secrets.NAS_SSH_PASSWORD != '' }}` guard so builds pass without it.)
 - ~~`[Human]` First-time NAS setup~~ Done 2026-04-19 — `/volume1/docker/claude-monarch/` deployed, container running
 - `[Human]` Set `MONARCH_TOKEN` in `/volume1/docker/claude-monarch/.env` then `docker compose restart claude-monarch`
