@@ -47,21 +47,6 @@ jobs:
           sudo dpkg -i /tmp/cloudflared.deb && sudo apt-get install -y sshpass
 
       - name: Deploy to NAS
-<<<<<<< HEAD
-        if: ${{ secrets.NAS_SSH_PASSWORD != '' }}
-        uses: appleboy/ssh-action@v1
-        with:
-          host: 192.168.0.64
-          port: 2222
-          username: charles
-          password: ${{ secrets.NAS_SSH_PASSWORD }}
-          script_stop: true
-          envs: NAS_PASS
-          script: |
-            echo "$NAS_PASS" | sudo -S /usr/local/bin/docker compose -f /volume1/docker/claude-monarch/docker-compose.yml pull
-            echo "$NAS_PASS" | sudo -S /usr/local/bin/docker compose -f /volume1/docker/claude-monarch/docker-compose.yml up -d
-=======
->>>>>>> 0b8629a091204d34996c27f1ca2ee46393ffcbf4
         env:
           NAS_PASS: ${{ secrets.NAS_SSH_PASSWORD }}
           SSHPASS: ${{ secrets.NAS_SSH_PASSWORD }}
