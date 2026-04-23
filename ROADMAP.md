@@ -19,6 +19,7 @@
 - [x] `[Code]` Write integration tests for end-to-end flows (3 integration tests) — 2026-04-19
 
 ## 🚫 Blocked
+- ❌ [docker-monitor:container-stopped] Container `claude-monarch` is not running on the NAS — check `docker logs claude-monarch` and restart — 2026-04-23 08:42 UTC
 
 - `[Human]` Obtain `MONARCH_TOKEN` — needed before any live API calls work. Once in hand, set it in `.env` (see `.env.example`).
 - `[Human]` Add `NAS_SSH_PASSWORD` to GitHub repo secrets (Settings → Secrets → Actions) — required for deploy workflow to SSH into the NAS. (Workflow already has `if: ${{ secrets.NAS_SSH_PASSWORD != '' }}` guard so builds pass without it.)
