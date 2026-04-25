@@ -10,7 +10,7 @@ services:
       - MONARCH_TOKEN=${MONARCH_TOKEN}
       - PORT=8775
     volumes:
-      - ./logs:/app/logs
+      - /volume1/docker/claude-monarch/logs:/app/logs
     env_file:
       - .env
     logging:
