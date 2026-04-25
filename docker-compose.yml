@@ -9,6 +9,9 @@ services:
     environment:
       - MONARCH_TOKEN=${MONARCH_TOKEN}
       - PORT=8775
+    volumes:
+      - ./logs:/app/logs
+    command: sh -c "node dist/serve.js 2>&1 | tee -a /app/logs/app.log"
     env_file:
       - .env
     logging:
