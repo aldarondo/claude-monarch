@@ -2,6 +2,7 @@
  * SSE/HTTP entry point — listens on port 8775 for use in Docker/NAS deployments.
  * Claude Code config: { "url": "http://nas:8775/sse" }
  */
+import './logger';
 import * as dotenv from "dotenv";
 dotenv.config();
 
